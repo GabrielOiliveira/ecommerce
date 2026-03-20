@@ -1,0 +1,7 @@
+pandas
+numpy
+pyodbc
+matplotlib
+seaborn
+plotly
+faker
