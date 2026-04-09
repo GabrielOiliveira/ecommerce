@@ -1,7 +1,9 @@
 pandas
 numpy
-pyodbc
 matplotlib
 seaborn
 plotly
+pyodbc
 faker
+scikit-learn
+nbformat
