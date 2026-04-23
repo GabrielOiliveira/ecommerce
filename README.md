@@ -4,57 +4,58 @@ Desafio Final PD - Trilha de Dados
 
 ## Descrição
 
-Este projeto tem como objetivo analisar dados de vendas de um e-commerce, aplicando técnicas de engenharia de dados, análise exploratória e modelagem preditiva.
+Este projeto tem como objetivo analisar dados de vendas de um e-commerce, aplicando técnicas de engenharia de dados, análise exploratória, visualização e modelagem preditiva.
 
-O pipeline cobre todas as etapas:
-
-- Geração de dados
-- ETL (limpeza e transformação)
-- Armazenamento em banco relacional (SQL Server)
-- Análise exploratória (EDA)
-- Visualização em dashboard (Power BI)
-- Previsão de vendas com modelo de regressão
+O projeto foi ajustado para ser simples de executar em qualquer ambiente, utilizando SQLite como banco de dados padrão. A integração com SQL Server foi mantida apenas como uma opção avançada.
 
 ## Objetivos
 
 - Entender o comportamento dos clientes
 - Identificar produtos e categorias mais relevantes
 - Analisar tendências de vendas
-- Prever o faturamento futuro
+- Criar um dashboard para visualização dos dados
+- Prever o faturamento futuro com regressão linear
 
 ## Tecnologias Utilizadas
 
-- Python 3.13
-- Pandas / NumPy
-- Matplotlib / Plotly
+- Python
+- Pandas
+- NumPy
+- SQLite
+- Matplotlib
+- Plotly
 - Scikit-learn
-- PyODBC
-- SQL Server Express
-- SQL Server Management Studio (SSMS)
 - Power BI
+- SQL Server opcional
 
 ## Estrutura do Projeto
 
-```
+```text
 ecommerce/
 │
 ├── data/
 │   └── ecom_data.csv
 │
+├── database/
+│   └── ecommerce.db
+│
 ├── scripts/
-│   ├── gerar_dados.py
-│   └── etl_sqlserver.py
+│   ├── gera_dados.py
+│   ├── sqlite.py
+│   └── sqlserver.py
 │
 ├── sql/
-│   └── queries.sql
+│   └── consultas.sql
 │
 ├── notebooks/
 │   ├── analise.ipynb
+|   ├── dashboard_plotly.ipynb
 │   └── previsao.ipynb
 │
 ├── dashboard/
-│   ├── dashboard.pbix
+│   ├── Dashboard.pbix
 │   └── imagens/
+|       └──dashboard.png
 │
 ├── requirements.txt
 └── README.md
@@ -64,153 +65,108 @@ ecommerce/
 
 Instale as dependências com:
 
-```
+```bash
 pip install -r requirements.txt
 ```
 
-Conteúdo do requirements.txt:
+Conteúdo do arquivo `requirements.txt`:
 
-```
+```txt
 pandas
 numpy
 matplotlib
 plotly
 scikit-learn
-pyodbc
 faker
 nbformat
 ```
-
-## Pré-requisitos
-
-Para executar o projeto completo, é necessário:
-
-- Python 3.13
-- SQL Server Express instalado
-- SQL Server Management Studio (SSMS)
-- ODBC Driver 17 for SQL Server
-- Power BI Desktop
-
-## Configuração do Banco de Dados
-
-Importante: o script de ETL depende de configuração externa do SQL Server e não funciona em ambiente Python padrão sem essa preparação.
-
-### Criar banco de dados
-
-```
-CREATE DATABASE EcommerceDB;
-```
-
-### Selecionar o banco
-
-```
-USE EcommerceDB;
-```
-
-### Criar tabela
-
-```
-CREATE TABLE vendas (
-    ID_Transacao INT,
-    Data_Venda DATE,
-    ID_Cliente INT,
-    Nome_Produto VARCHAR(100),
-    Categoria_Produto VARCHAR(100),
-    Valor_Unitario FLOAT,
-    Quantidade INT,
-    Valor_Total FLOAT
-);
-```
-
-### Configurar conexão no Python
-
-No arquivo etl_sqlserver.py:
-
-```
-conn = pyodbc.connect(
-    "DRIVER={ODBC Driver 17 for SQL Server};"
-    "SERVER=.\\SQLEXPRESS;"
-    "DATABASE=EcommerceDB;"
-    "Trusted_Connection=yes;"
-)
-```
-
-Caso o nome do servidor seja diferente, ajuste o campo SERVER.
 
 ## Como Executar o Projeto
 
 ### 1. Clonar o repositório
 
-```
+```bash
 git clone <url-do-repositorio>
 cd ecommerce
 ```
 
-### 2. Instalar dependências
+### 2. Instalar as dependências
 
-```
+```bash
 pip install -r requirements.txt
 ```
 
-### 3. Gerar dataset
+### 3. Gerar o dataset
 
-```
-python scripts/gerar_dados.py
+```bash
+python scripts/gera_dados.py
 ```
 
-Isso irá gerar o arquivo:
+Esse comando cria o arquivo:
 
-```
+```text
 data/ecom_data.csv
 ```
 
-### 4. Configurar o banco SQL Server
+### 4. Executar o ETL com SQLite
 
-Antes de executar o ETL, é necessário:
-
-- Banco EcommerceDB criado
-- Tabela vendas criada
-- SQL Server em execução
-- Driver ODBC instalado
-
-### 5. Executar ETL
-
-```
-python scripts/etl_sqlserver.py
+```bash
+python scripts/sqlite.py
 ```
 
-O script realiza:
+Esse comando cria automaticamente o banco local:
 
-- Remoção de duplicados
-- Remoção de valores nulos
-- Conversão de datas
-- Criação da coluna Valor_Total
-- Inserção dos dados no banco
-
-### 6. Executar análise
-
-Abrir os notebooks:
-
-- notebooks/analise.ipynb
-- notebooks/previsao.ipynb
-
-### 7. Abrir dashboard
-
-Abrir o arquivo no Power BI:
-
+```text
+database/ecommerce.db
 ```
-dashboard/dashboard.pbix
+
+Também cria automaticamente a tabela:
+
+```text
+vendas
 ```
+
+## Execução Padrão
+
+A execução padrão do projeto utiliza SQLite.
+
+Essa escolha foi feita para reduzir a dependência de ambiente externo, evitando a necessidade de instalar e configurar SQL Server, SSMS, driver ODBC e instância local.
+
+Com SQLite, o projeto pode ser executado apenas com Python e as bibliotecas listadas no `requirements.txt`.
+
+## Execução Opcional com SQL Server
+
+O projeto também possui um script opcional para carga no SQL Server:
+
+```bash
+python scripts/sqlserver.py
+```
+
+Essa execução exige configuração externa, como:
+
+- SQL Server Express instalado
+- SQL Server Management Studio instalado
+- ODBC Driver 17 for SQL Server instalado
+- Banco `EcommerceDB` criado
+- Tabela `vendas` criada
+- Ajuste da string de conexão no script
+
+Por esse motivo, o SQL Server não é a forma principal de execução do projeto.
 
 ## ETL
 
+As etapas de ETL realizadas foram:
+
+- Leitura do arquivo CSV
 - Remoção de valores nulos
 - Remoção de duplicados
-- Conversão de datas
-- Criação da coluna Valor_Total
-- Carga no SQL Server
+- Conversão da coluna `Data_Venda` para formato de data
+- Criação da coluna `Valor_Total`
+- Carga dos dados no banco SQLite
 
-## Análise Exploratória (EDA)
+## Análise Exploratória
+
+Foram analisados:
 
 - Faturamento total
 - Ticket médio
@@ -223,7 +179,7 @@ dashboard/dashboard.pbix
 
 ## Dashboard
 
-O dashboard apresenta:
+O dashboard foi desenvolvido no Power BI e apresenta:
 
 - KPIs principais
 - Evolução das vendas
@@ -231,34 +187,44 @@ O dashboard apresenta:
 - Produtos mais vendidos
 - Filtros interativos
 
+O arquivo do dashboard está localizado em:
+
+```text
+dashboard/Dashboard.pbix
+```
+
 ## Modelo Preditivo
 
-Foi utilizado um modelo de regressão linear para prever vendas.
+Foi utilizado um modelo de regressão linear para prever vendas futuras.
 
 ### Metodologia
 
 - Agrupamento das vendas por mês
 - Conversão da variável temporal em formato numérico
-- Treinamento com Linear Regression
+- Treinamento com `LinearRegression`
+- Previsão do próximo período
 
 ### Resultado
 
-O modelo indica tendência de crescimento nas vendas ao longo do tempo.
+O modelo indicou uma tendência de crescimento nas vendas ao longo do tempo.
 
 ## Insights
 
 - Algumas categorias concentram maior faturamento
 - Existe tendência de crescimento nas vendas
 - Há variações mensais que podem indicar sazonalidade
-- Produtos específicos dominam o resultado
+- Produtos específicos apresentam maior impacto no resultado total
 
 ## Limitações
 
 - Dados simulados
-- Modelo simples
+- Modelo preditivo simples
 - Não considera fatores externos
-- Dependência de configuração do SQL Server
+- O dashboard depende do arquivo local do Power BI
+- A execução com SQL Server depende de configuração externa
 
 ## Conclusão
 
-O projeto demonstra um pipeline completo de dados, desde a geração até a previsão, integrando Python, banco de dados e ferramentas de visualização.
+O projeto demonstra um pipeline completo de dados, passando por geração, tratamento, armazenamento, análise, visualização e previsão.
+
+A versão padrão com SQLite torna o projeto mais simples de executar em diferentes ambientes, enquanto a versão opcional com SQL Server mantém a possibilidade de simular um cenário mais próximo de ambientes corporativos.
